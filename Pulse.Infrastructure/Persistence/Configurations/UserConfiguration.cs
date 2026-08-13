@@ -15,21 +15,29 @@ namespace Pulse.Infrastructure.Persistence.Configurations
 
             builder.HasKey(t => t.Id);
 
+            builder.Property(t => t.Id)
+                .HasColumnName("id");
+
             builder.Property(t => t.Email)
                 .IsRequired()
-                .HasMaxLength(320);
+                .HasMaxLength(320)
+                .HasColumnName("email");
 
             builder.Property(t => t.PasswordHash)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("password_hash");
 
             builder.Property(t => t.DisplayName)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("display_name");
 
             builder.Property(t => t.CreatedAt)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("created_at");
 
             builder.Property(t => t.UpdatedAt)
-                .IsRequired();
+                .IsRequired()
+                .HasColumnName("updated_at");
 
             builder.HasIndex(x => x.Email)
                 .IsUnique();

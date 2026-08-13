@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Pulse.Infrastructure\Pulse.Infrastructure.csproj" />
     <ProjectReference Include="..\Pulse.ServiceDefaults\Pulse.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Pulse.Application\Pulse.Application.csproj" />
   </ItemGroup>
 
 </Project>
