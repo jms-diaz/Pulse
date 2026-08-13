@@ -5,5 +5,8 @@
   </Project>
   <Project Path="Pulse.Api/Pulse.Api.csproj" />
   <Project Path="Pulse.AppHost/Pulse.AppHost.csproj" Id="54830a30-ec31-40d6-9d92-8c3f171fb875" />
+  <Project Path="Pulse.Application/Pulse.Application.csproj" Id="02b1bf34-c107-4e1e-b806-a5c5d98b0a4a" />
+  <Project Path="Pulse.Domain/Pulse.Domain.csproj" Id="db076a0c-9239-459b-ac0f-be98339695f2" />
+  <Project Path="Pulse.Infrastructure/Pulse.Infrastructure.csproj" Id="dff0a6a6-5b5a-4277-907c-3e8ed7aece17" />
   <Project Path="Pulse.ServiceDefaults/Pulse.ServiceDefaults.csproj" />
 </Solution>

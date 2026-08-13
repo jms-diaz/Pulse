@@ -1,10 +1,12 @@
 using Scalar.AspNetCore;
+using Pulse.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
 builder.AddNpgsqlDataSource("pulse");
+builder.AddNpgsqlDbContext<AppDbContext>("pulse");
 
 builder.AddRedisDistributedCache("redis");
 
