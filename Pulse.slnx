@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="pulse-frontend/pulse-frontend.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Pulse.Api/Pulse.Api.csproj" />
+  <Project Path="Pulse.AppHost/Pulse.AppHost.csproj" Id="54830a30-ec31-40d6-9d92-8c3f171fb875" />
+  <Project Path="Pulse.ServiceDefaults/Pulse.ServiceDefaults.csproj" />
+</Solution>
