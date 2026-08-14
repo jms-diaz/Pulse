@@ -1,23 +1,29 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Pulse.Application.Interfaces;
-using Pulse.Domain.Entities;
 
 namespace Pulse.Infrastructure.Authentication
 {
-    public class PasswordService : IPasswordService
+    public sealed class PasswordService : IPasswordService
     {
-        private readonly PasswordHasher _hasher = new();
+        private readonly PasswordHasher<object> _hasher = new();
 
         public string Hash(string password)
         {
-            return _hasher.HashPassword(password);
+            return _hasher.HashPassword(
+                new object(),
+                password);
         }
 
         public bool Verify(string password, string passwordHash)
         {
-            var result =  _hasher.VerifyHashedPassword(password, passwordHash);
+            var result = _hasher.VerifyHashedPassword(
+                new object(),
+                passwordHash,
+                password);
 
-            return result != PasswordVerificationResult.Failed;
+            return result is
+                PasswordVerificationResult.Success or
+                PasswordVerificationResult.SuccessRehashNeeded;
         }
     }
 }

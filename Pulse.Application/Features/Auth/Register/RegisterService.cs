@@ -17,10 +17,10 @@ namespace Pulse.Application.Features.Auth.Register
             _passwordService = passwordService;
         }
 
-        public async Task<User> RegisterAsync(RegisterRequest request) { 
+        public async Task<User> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken) { 
             var email = request.Email.Trim().ToLowerInvariant();
 
-            var exists = await _userRepository.ExistsByEmailAsync(email);
+            var exists = await _userRepository.ExistsByEmailAsync(email, cancellationToken);
 
             if (exists)
             {
