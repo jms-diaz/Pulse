@@ -86,5 +86,29 @@ namespace Pulse.Infrastructure.Persistence.Repositories
                     new { Email = email },
                     cancellationToken: cancellationToken));
         }
+
+        public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            const string sql =
+                """
+                SELECT 
+                    id, 
+                    email, 
+                    password_hash AS PasswordHash, 
+                    display_name AS DisplayName,
+                    created_at AS CreatedAt,
+                    updated_at AS UpdatedAt
+                FROM users
+                WHERE id = @Id
+                """;
+
+            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            return await connection.QuerySingleOrDefaultAsync<User>(
+                new CommandDefinition(
+                    sql,
+                    new { Id = id },
+                    cancellationToken: cancellationToken));
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace Pulse.Infrastructure.Authentication
         public required string Audience { get; set; }
         public required string SecretKey { get; set; }
         public int AccessTokenExpirationInMinutes{ get; set; }
+        public int RefreshTokenExpirationInDays { get; set; }
 
     }
 }

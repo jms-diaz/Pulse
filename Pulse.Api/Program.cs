@@ -1,5 +1,6 @@
 using Pulse.Api.Infrastructure;
 using Pulse.Application.Features.Auth.Login;
+using Pulse.Application.Features.Auth.Refresh;
 using Pulse.Application.Features.Auth.Register;
 using Pulse.Application.Interfaces;
 using Pulse.Infrastructure.Authentication;
@@ -32,6 +33,9 @@ builder.Services.Configure<JwtOptions>(
 
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<ITokenHasher, TokenHasher>();
+builder.Services.AddScoped<RefreshService>();
 
 builder.Services.AddOpenApi();
 
@@ -42,7 +46,7 @@ app.MapDefaultEndpoints();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference("/");
 }
 
 app.MapPost("/auth/register", async (
@@ -68,6 +72,16 @@ app.MapPost("/auth/login", async (
     CancellationToken cancellationToken) =>
 {
     var response = await service.LoginAsync(request, cancellationToken);
+
+    return Results.Ok(response);
+});
+
+app.MapPost("/auth/refresh", async (
+    RefreshRequest request,
+    RefreshService service,
+    CancellationToken cancellationToken) =>
+{
+    var response = await service.RefreshAsync(request, cancellationToken);
 
     return Results.Ok(response);
 });

@@ -54,11 +54,18 @@ namespace Pulse.Infrastructure.Authentication
             return new AccessTokenResult(tokenString, expiresAt);
         }
 
-        public string GenerateRefreshToken()
+        public RefreshTokenResult GenerateRefreshToken()
         {
             // Generate secure random value used to refresh access tokens
-            return Convert.ToBase64String(
+            var token = Convert.ToBase64String(
                 RandomNumberGenerator.GetBytes(64));
+
+            var expiresAt = DateTime.UtcNow.AddDays(
+                _options.RefreshTokenExpirationInDays);
+
+            return new RefreshTokenResult(
+                token,
+                expiresAt);
         }
     }
 }

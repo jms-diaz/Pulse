@@ -9,6 +9,6 @@ namespace Pulse.Application.Interfaces
     public interface ITokenService
     {
         AccessTokenResult GenerateAccessToken(User user);
-        string GenerateRefreshToken();
+        RefreshTokenResult GenerateRefreshToken();
     }
 }
