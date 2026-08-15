@@ -1,3 +1,4 @@
+using Pulse.Api.Endpoints.Auth;
 using Pulse.Api.Infrastructure;
 using Pulse.Application.Features.Auth.Login;
 using Pulse.Application.Features.Auth.Logout;
@@ -8,6 +9,8 @@ using Pulse.Infrastructure.Authentication;
 using Pulse.Infrastructure.Persistence;
 using Pulse.Infrastructure.Persistence.Repositories;
 using Scalar.AspNetCore;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +43,19 @@ builder.Services.AddScoped<RefreshService>();
 
 builder.Services.AddScoped<LogoutService>();
 
+builder.Services.AddScoped<ICurrentUser, CurrentUser>();
+
 builder.Services.AddOpenApi();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy =>
+    {
+        policy.RequireRole("Admin");
+    });
+});
 
 var app = builder.Build();
 
@@ -52,53 +67,43 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference("/");
 }
 
-app.MapPost("/auth/register", async (
-    RegisterRequest request,
-    RegisterService service,
-    CancellationToken cancellationToken) =>
-{
-    var user = await service.RegisterAsync(request, cancellationToken);
+app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapAuthEndpoints();
+
+app.MapGet("/test-auth", (
+    ICurrentUser currentUser) =>
+{
     return Results.Ok(new
     {
-        Id = user.Id,
-        Email = user.Email,
-        DisplayName = user.DisplayName,
-        CreatedAt = user.CreatedAt,
-        UpdatedAt = user.UpdatedAt
+        currentUser.UserId,
+        currentUser.Email,
+        currentUser.IsAuthenticated
+    });
+})
+.RequireAuthorization();
+
+app.MapGet("/admin-test", () =>
+{
+    return Results.Ok("You are an admin.");
+})
+.RequireAuthorization("AdminOnly");
+
+app.MapGet("/debug-auth", (HttpContext context) =>
+{
+    return Results.Ok(new
+    {
+        IsAuthenticated = context.User.Identity?.IsAuthenticated,
+        AuthenticationType = context.User.Identity?.AuthenticationType,
+        Claims = context.User.Claims.Select(c => new
+        {
+            c.Type,
+            c.Value
+        })
     });
 });
-
-app.MapPost("/auth/login", async (
-    LoginRequest request,
-    LoginService service,
-    CancellationToken cancellationToken) =>
-{
-    var response = await service.LoginAsync(request, cancellationToken);
-
-    return Results.Ok(response);
-});
-
-app.MapPost("/auth/refresh", async (
-    RefreshRequest request,
-    RefreshService service,
-    CancellationToken cancellationToken) =>
-{
-    var response = await service.RefreshAsync(request, cancellationToken);
-
-    return Results.Ok(response);
-});
-
-app.MapPost("/auth/logout", async (
-    LogoutRequest request,
-    LogoutService service,
-    CancellationToken cancellationToken) =>
-{
-    await service.LogoutAsync(request, cancellationToken);
-
-    return Results.NoContent();
-});
-
-app.UseHttpsRedirection();
 
 app.Run();

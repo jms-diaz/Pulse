@@ -41,6 +41,11 @@ namespace Pulse.Infrastructure.Persistence.Configurations
 
             builder.HasIndex(x => x.Email)
                 .IsUnique();
+
+            builder.Property(x => x.Role)
+                .HasColumnName("role")
+                .HasConversion<string>()
+                .IsRequired();
         }
     }
 }

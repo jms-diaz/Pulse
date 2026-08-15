@@ -1,4 +1,6 @@
-﻿namespace Pulse.Domain.Entities
+﻿using Pulse.Domain.Enums;
+
+namespace Pulse.Domain.Entities
 {
     public class User
     {
@@ -8,6 +10,7 @@
         public string DisplayName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+        public UserRole Role { get; private set; } = UserRole.Member;
 
         public ICollection<RefreshToken> RefreshTokens { get; private set; } = new List<RefreshToken>();
 

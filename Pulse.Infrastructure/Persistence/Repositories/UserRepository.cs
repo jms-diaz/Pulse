@@ -22,14 +22,15 @@ namespace Pulse.Infrastructure.Persistence.Repositories
             const string sql =
                 """
                 INSERT INTO users
-                    (email, password_hash, display_name, created_at, updated_at)
+                    (email, password_hash, display_name, role, created_at, updated_at)
                 VALUES
-                    (@Email, @PasswordHash, @DisplayName, @CreatedAt, @UpdatedAt)
+                    (@Email, @PasswordHash, @DisplayName, @Role, @CreatedAt, @UpdatedAt)
                 RETURNING
                     id AS Id,
                     email AS Email,
                     password_hash AS PasswordHash,
                     display_name AS DisplayName,
+                    role AS Role,
                     created_at AS CreatedAt,
                     updated_at AS UpdatedAt;
                 """;
@@ -72,6 +73,7 @@ namespace Pulse.Infrastructure.Persistence.Repositories
                     email, 
                     password_hash AS PasswordHash, 
                     display_name AS DisplayName,
+                    role AS Role,
                     created_at AS CreatedAt,
                     updated_at AS UpdatedAt
                 FROM users
@@ -96,6 +98,7 @@ namespace Pulse.Infrastructure.Persistence.Repositories
                     email, 
                     password_hash AS PasswordHash, 
                     display_name AS DisplayName,
+                    role AS Role,
                     created_at AS CreatedAt,
                     updated_at AS UpdatedAt
                 FROM users
