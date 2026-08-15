@@ -9,6 +9,7 @@ namespace Pulse.Application.Interfaces
     {
         Task CreateAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default);
         Task<RefreshToken?> GetByTokenHashAsync(string tokenHash, CancellationToken cancellationToken = default);
-        Task RevokeAsync(int refreshTokenId, CancellationToken cancellationToken = default);
+        Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default);
+        Task RotateAsync(RefreshToken currentToken, RefreshToken newToken, CancellationToken cancellationToken = default);
     }
 }

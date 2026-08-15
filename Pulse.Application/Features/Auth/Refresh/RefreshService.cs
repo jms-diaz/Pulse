@@ -61,7 +61,7 @@ namespace Pulse.Application.Features.Auth.Refresh
 
             refreshToken.Revoke();
 
-            await _refreshTokenRepository.RevokeAsync(refreshToken.Id, cancellationToken);
+            await _refreshTokenRepository.RotateAsync(refreshToken, newRefreshTokenEntity, cancellationToken);
 
             return new LoginResponse(
                 accessToken.Token,

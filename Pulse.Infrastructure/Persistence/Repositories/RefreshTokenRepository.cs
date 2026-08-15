@@ -60,7 +60,7 @@ namespace Pulse.Infrastructure.Persistence.Repositories
                     cancellationToken: cancellationToken));
         }
 
-        public async Task RevokeAsync(int refreshTokenId, CancellationToken cancellationToken = default)
+        public async Task RevokeAsync(RefreshToken refreshToken, CancellationToken cancellationToken = default)
         {
             const string sql =
                 """
@@ -76,10 +76,67 @@ namespace Pulse.Infrastructure.Persistence.Repositories
                     sql,
                     new
                     {
-                        Id = refreshTokenId,
-                        RevokedAt = DateTime.UtcNow
+                        Id = refreshToken.Id,
+                        RevokedAt = refreshToken.RevokedAt
                     },
                     cancellationToken: cancellationToken));
+        }
+
+        public async Task RotateAsync(RefreshToken currentToken, RefreshToken newToken ,CancellationToken cancellationToken = default)
+        {
+            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+
+            await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+            try
+            {
+                const string revokeSql =
+                """
+                UPDATE refresh_tokens
+                SET revoked_at = @RevokedAt
+                WHERE id = @Id;
+                """;
+
+                await connection.ExecuteAsync(
+                    new CommandDefinition(
+                        revokeSql,
+                        new
+                        {
+                            Id = currentToken.Id,
+                            RevokedAt = currentToken.RevokedAt
+                        },
+                        transaction: transaction,
+                        cancellationToken: cancellationToken));
+
+                const string insertSql =
+                """
+                INSERT INTO refresh_tokens
+                    (user_id, token_hash, expires_at, created_at)
+                VALUES
+                    (@UserId, @TokenHash, @ExpiresAt, @CreatedAt);
+                """;
+
+                await connection.ExecuteAsync(
+                    new CommandDefinition(
+                        insertSql,
+                        new
+                        {
+                            newToken.UserId,
+                            newToken.TokenHash,
+                            newToken.ExpiresAt, 
+                            newToken.CreatedAt
+                        },
+                        transaction: transaction,
+                        cancellationToken: cancellationToken));
+
+                await transaction.CommitAsync(cancellationToken);
+
+            }
+            catch
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
         }
     }
 }

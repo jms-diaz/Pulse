@@ -1,5 +1,6 @@
 using Pulse.Api.Infrastructure;
 using Pulse.Application.Features.Auth.Login;
+using Pulse.Application.Features.Auth.Logout;
 using Pulse.Application.Features.Auth.Refresh;
 using Pulse.Application.Features.Auth.Register;
 using Pulse.Application.Interfaces;
@@ -36,6 +37,8 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ITokenHasher, TokenHasher>();
 builder.Services.AddScoped<RefreshService>();
+
+builder.Services.AddScoped<LogoutService>();
 
 builder.Services.AddOpenApi();
 
@@ -84,6 +87,16 @@ app.MapPost("/auth/refresh", async (
     var response = await service.RefreshAsync(request, cancellationToken);
 
     return Results.Ok(response);
+});
+
+app.MapPost("/auth/logout", async (
+    LogoutRequest request,
+    LogoutService service,
+    CancellationToken cancellationToken) =>
+{
+    await service.LogoutAsync(request, cancellationToken);
+
+    return Results.NoContent();
 });
 
 app.UseHttpsRedirection();
