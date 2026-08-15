@@ -74,36 +74,4 @@ app.UseAuthorization();
 
 app.MapAuthEndpoints();
 
-app.MapGet("/test-auth", (
-    ICurrentUser currentUser) =>
-{
-    return Results.Ok(new
-    {
-        currentUser.UserId,
-        currentUser.Email,
-        currentUser.IsAuthenticated
-    });
-})
-.RequireAuthorization();
-
-app.MapGet("/admin-test", () =>
-{
-    return Results.Ok("You are an admin.");
-})
-.RequireAuthorization("AdminOnly");
-
-app.MapGet("/debug-auth", (HttpContext context) =>
-{
-    return Results.Ok(new
-    {
-        IsAuthenticated = context.User.Identity?.IsAuthenticated,
-        AuthenticationType = context.User.Identity?.AuthenticationType,
-        Claims = context.User.Claims.Select(c => new
-        {
-            c.Type,
-            c.Value
-        })
-    });
-});
-
 app.Run();

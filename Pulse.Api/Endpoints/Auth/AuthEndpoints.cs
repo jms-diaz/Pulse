@@ -14,7 +14,7 @@ namespace Pulse.Api.Endpoints.Auth
             group.MapPost("/register", Register);
             group.MapPost("/login", Login);
             group.MapPost("/refresh", Refresh);
-            group.MapPost("/auth", Logout);
+            group.MapPost("/logout", Logout);
             return endpoints;
         }
 
